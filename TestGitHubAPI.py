@@ -36,6 +36,9 @@ def mocked_requests_get(*args, **kwargs):
     def json(self):
       return self.json_data
   
+  if args[0] == "https://api.github.com/users/bad-request/repos":
+    return MockResponse(None, 500)
+
   fileName = 'test-data/' + args[0].replace('https://api.github.com/','').replace('/','#') + '.json'
   if fileName in testData:
     return MockResponse(testData[fileName], 200)
@@ -76,6 +79,13 @@ class TestGitHubAPI(TestCase):
       printUserRepos('sdfsdfsdfsdfsdfsdf')
       self.assertEqual(print_.call_args_list, [], "no repos should have been found for the user")
       self.assertEqual(reqs_.call_args_list, [call('https://api.github.com/users/sdfsdfsdfsdfsdfsdf/repos')])
+
+    @patch('requests.get', side_effect=mocked_requests_get)
+    @patch('GitHubAPI.print')
+    def testBadResponses(self, print_, reqs_):
+      printUserRepos('bad-request')
+      self.assertEqual(print_.call_args_list, [call('Cannot contact github')], "bad request so no results expected")
+      self.assertEqual(reqs_.call_args_list, [call('https://api.github.com/users/bad-request/repos')])
 
 if __name__ == '__main__':
     print('Running unit tests')

@@ -7,7 +7,15 @@ def printUserRepos(userID):
   Format: "Repo: <name> Number of commits: <total commits>"""
   r = requests.get('https://api.github.com/users/' + userID + '/repos')
   repos = r.json()
+  # if nothing returned then we probably cannot contact github
+  if repos is None:
+    print('Cannot contact github')
+    return
+  # handle error responses from github with are always objects with a message property
   if not isinstance(repos, list):
+    if 'API rate limit exceeded' in repos['message']:
+      print('Unable to contact github due to rate limitation')
+      return
     print('UserID not found')
     return
   for repo in repos:
