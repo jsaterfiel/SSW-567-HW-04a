@@ -5,6 +5,9 @@ import argparse
 def printUserRepos(userID):
   """printUserRepos prints out the user's repos with the number of commits
   Format: "Repo: <name> Number of commits: <total commits>"""
+  if not isinstance(userID, str):
+    print('Input must be a string')
+    return
   r = requests.get('https://api.github.com/users/' + userID + '/repos')
   repos = r.json()
   # if nothing returned then we probably cannot contact github

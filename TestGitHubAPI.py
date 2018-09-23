@@ -71,21 +71,28 @@ class TestGitHubAPI(TestCase):
     def testUnknownUserId(self, print_, reqs_):
       printUserRepos('sdflkjsdflkjsdflkjsdflkjsdflkjsdlfkjsdflkjsdlkjsdf')
       self.assertEqual(print_.call_args_list, [call('UserID not found')], "userID error check")
-      self.assertEqual(reqs_.call_args_list, [call('https://api.github.com/users/sdflkjsdflkjsdflkjsdflkjsdflkjsdlfkjsdflkjsdlkjsdf/repos')])
+      self.assertEqual(reqs_.call_args_list, [call('https://api.github.com/users/sdflkjsdflkjsdflkjsdflkjsdflkjsdlfkjsdflkjsdlkjsdf/repos')], 'expected invalid user to be called')
 
     @patch('requests.get', side_effect=mocked_requests_get)
     @patch('GitHubAPI.print')
     def testNoReposForUser(self, print_, reqs_):
       printUserRepos('sdfsdfsdfsdfsdfsdf')
       self.assertEqual(print_.call_args_list, [], "no repos should have been found for the user")
-      self.assertEqual(reqs_.call_args_list, [call('https://api.github.com/users/sdfsdfsdfsdfsdfsdf/repos')])
+      self.assertEqual(reqs_.call_args_list, [call('https://api.github.com/users/sdfsdfsdfsdfsdfsdf/repos')], 'expected user without any repos to be called')
 
     @patch('requests.get', side_effect=mocked_requests_get)
     @patch('GitHubAPI.print')
     def testBadResponses(self, print_, reqs_):
       printUserRepos('bad-request')
-      self.assertEqual(print_.call_args_list, [call('Cannot contact github')], "bad request so no results expected")
-      self.assertEqual(reqs_.call_args_list, [call('https://api.github.com/users/bad-request/repos')])
+      self.assertEqual(print_.call_args_list, [call('Cannot contact github')], "bad request so cannot contact github expected")
+      self.assertEqual(reqs_.call_args_list, [call('https://api.github.com/users/bad-request/repos')], 'expected bad-request to be called only')
+
+    @patch('requests.get', side_effect=mocked_requests_get)
+    @patch('GitHubAPI.print')
+    def testInvalidInput(self, print_, reqs_):
+      printUserRepos(1)
+      self.assertEqual(print_.call_args_list, [call('Input must be a string')], "invalid input so input must be string expected")
+      self.assertEqual(reqs_.call_args_list, [], 'invalid input so no calls expected')
 
 if __name__ == '__main__':
     print('Running unit tests')
