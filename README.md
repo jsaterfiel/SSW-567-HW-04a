@@ -1,4 +1,4 @@
-[![build status of master](https://travis-ci.org/jsaterfiel/SSW-567-HW-04a.svg?branch=master)](https://travis-ci.org/jsaterfiel/SSW-567-HW-04a)
+[![build status of master](https://travis-ci.org/jsaterfiel/SSW-567-HW-04a.svg?branch=HW05a_Mocking)](https://travis-ci.org/jsaterfiel/SSW-567-HW-04a)
 
 # SSW-567-HW-04a
 SSW 567 Homework 04a
